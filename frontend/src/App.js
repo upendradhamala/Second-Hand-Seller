@@ -6,6 +6,7 @@ import Footer from './components/Footer'
 import { BrowserRouter as Router, Route } from 'react-router-dom'
 import ProductScreen from '../src/screens/ProductScreen'
 import LoginScreen from '../src/screens/LoginScreen'
+import RegisterScreen from '../src/screens/RegisterScreen'
 
 const App = () => {
   return (
@@ -17,6 +18,7 @@ const App = () => {
           <Container>
             <Route path='/' component={Landing} exact />
             <Route path='/login' component={LoginScreen} />
+            <Route path='/register' component={RegisterScreen} />
 
             <Route path='/product/:id' component={ProductScreen} />
           </Container>
