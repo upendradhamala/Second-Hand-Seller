@@ -8,6 +8,9 @@ import {
   USER_REGISTER_REQUEST,
   USER_REGISTER_SUCCESS,
   USER_REGISTER_RESET,
+  EMAIL_SEND_FAIL,
+  EMAIL_SEND_SUCCESS,
+  EMAIL_SEND_REQUEST,
 } from '../types/userConstants'
 
 export const login = (email, password) => async (dispatch) => {
@@ -87,6 +90,47 @@ export const register = (name, email, password, phone_no, address) => async (
   } catch (error) {
     dispatch({
       type: USER_REGISTER_FAIL,
+      payload:
+        error.response && error.response.data.message
+          ? error.response.data.message
+          : error.message,
+    })
+  }
+}
+
+//EMAIL SEND
+
+export const sendEmail = (receiver, text, name, address, productName) => async (
+  dispatch,
+  getState
+) => {
+  try {
+    dispatch({
+      type: EMAIL_SEND_REQUEST,
+    })
+    const {
+      userLogin: { userData },
+    } = getState()
+    const config = {
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${userData.token}`,
+      },
+    }
+
+    const { data } = await axios.post(
+      '/api/users/email',
+      { receiver, text, name, address, productName },
+      config
+    )
+    console.log(data)
+    dispatch({
+      type: EMAIL_SEND_SUCCESS,
+      payload: data,
+    })
+  } catch (error) {
+    dispatch({
+      type: EMAIL_SEND_FAIL,
       payload:
         error.response && error.response.data.message
           ? error.response.data.message

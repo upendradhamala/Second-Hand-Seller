@@ -1,6 +1,11 @@
 import asyncHandler from 'express-async-handler'
 import User from '../models/userModel.js'
+import dotenv from 'dotenv'
+
 import generateToken from '../utils/generateToken.js'
+import nodemailer from 'nodemailer'
+dotenv.config()
+
 const authUser = asyncHandler(async (req, res) => {
   const { email, password } = req.body
   const user = await User.findOne({ email })
@@ -89,4 +94,38 @@ const registerUser = asyncHandler(async (req, res) => {
     throw new Error('Invalid User Data')
   }
 })
-export { authUser, getUserProfile, registerUser }
+
+const emailSend = asyncHandler(async (req, res) => {
+  const { receiver, text, name, address, productName } = req.body
+  console.log(req.body)
+
+  var transporter = nodemailer.createTransport({
+    service: 'gmail',
+    auth: {
+      user: '',
+      pass: '',
+    },
+  })
+
+  var mailOptions = {
+    from: '',
+    to: receiver,
+    subject: 'Second Hand Buy Sell Nepal',
+
+    html: `<div style="background:#31686e;text-align:center;color:white">One of the Second Hand Nepal User wants
+    to buy your ${productName}. </div><br/>
+    <p>His/Her name is ${name} and is a resident of ${address}</p>
+    He/She says:  ${text}`,
+  }
+
+  transporter.sendMail(mailOptions, function (error, info) {
+    if (error) {
+      res.status(400)
+      throw new Error(error)
+    } else {
+      console.log('Email sent: ' + info.response)
+      res.status(201).json({ response: 'Email Successfully Sent' })
+    }
+  })
+})
+export { authUser, getUserProfile, registerUser, emailSend }

@@ -8,8 +8,9 @@ img{
 }
 
 
-.card:hover{
-
+body{
+  font-family: 'Montserrat', sans-serif;
+  font-weight: 500;
 
 }
 .name-label{
@@ -107,7 +108,7 @@ li{
 }
 
 
-.fa-check-circle{
+.fa-mobile-alt{
   color:green;
 margin-right: 0.2rem;
   /* padding:1rem; */
@@ -135,3 +136,77 @@ margin-right: 0.2rem;
 border-radius: 5px;
 color:white;
 }
+
+.formAround{
+  border:1px solid rgb(137, 155, 130);
+  /* border-radius:2px; */
+}
+
+.marginshift li{
+  margin-left: -40px;
+}
+
+.text-area{
+  /* border: 2px solid red; */
+  background: rgb(209, 74, 178);
+}
+.text-area1{
+  margin:0px -15px;
+  background: rgb(13, 122, 150);
+  color:white;
+  padding-left: 15px;
+  /* padding-bottom:1px; */
+  margin-bottom: 3px;
+  /* border: 2px solid red; */
+}
+.text-area3{
+  /* margin-bottom: 100px; */
+  /* border: 2px solid red; */
+  padding-bottom: 3px;
+}
+
+.button{
+  margin:20px auto;
+  width:20%;
+  display: block;
+  border:none;
+  border-radius: 5px;
+  padding:5px;
+  color:white;
+  background: rgb(94, 143, 39);
+
+
+}
+
+.emailbutton{
+  border-radius: 5px;
+  border:none;
+  margin-left: 2px;
+}
+
+
+.far{
+  
+  margin:auto;
+  
+  color:red;
+ 
+}
+.cross{
+  display: flex;
+ 
+
+
+}
+.fa-window-close{
+ 
+  font-size: 1.4rem;
+
+}
+
+.cancel{
+  border:none;
+  background: none;
+}
+
+

@@ -47,7 +47,8 @@ const Header = () => {
               )}
               <LinkContainer to='/about'>
                 <Nav.Link>
-                  <i className='far fa-address-card'></i> About Us
+                  {/* <i className='far fa-address-card'></i>  */}
+                  About Us
                 </Nav.Link>
               </LinkContainer>
             </Nav>

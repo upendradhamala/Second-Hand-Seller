@@ -5,12 +5,13 @@ import { productListReducer } from './reducers/productReducers'
 import { productDetailsReducer } from './reducers/productReducers'
 import { userLoginReducer } from './reducers/userReducer'
 import { userRegisterReducer } from './reducers/userReducer'
-
+import { emailReducer } from './reducers/userReducer'
 const reducer = combineReducers({
   productList: productListReducer,
   productDetails: productDetailsReducer,
   userLogin: userLoginReducer,
-  userRegister:userRegisterReducer
+  userRegister: userRegisterReducer,
+  emailReducer: emailReducer,
 })
 
 const userDataFromStorage = localStorage.getItem('userData')
