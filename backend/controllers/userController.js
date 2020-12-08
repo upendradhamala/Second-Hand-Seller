@@ -114,8 +114,8 @@ const emailSend = asyncHandler(async (req, res) => {
   var transporter = nodemailer.createTransport({
     service: 'gmail',
     auth: {
-      user: '',
-      pass: '',
+      user: USER,
+      pass: PASSWORD,
     },
   })
 
