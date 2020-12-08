@@ -1,6 +1,11 @@
 import mongoose from 'mongoose'
 const reviewSchema = mongoose.Schema(
   {
+    user: {
+      type: mongoose.Schema.Types.ObjectId,
+      required: true,
+      ref: 'User',
+    },
     name: {
       type: String,
       required: true,
@@ -66,7 +71,6 @@ const productSchema = mongoose.Schema(
       },
       city: {
         type: String,
-        required: true,
       },
       shippingCharge: {
         type: Number,
@@ -75,18 +79,17 @@ const productSchema = mongoose.Schema(
       },
     },
     seller: {
-      name: {
+      sellername: {
         type: String,
         required: true,
       },
-      address: {
+      selleraddress: {
         type: String,
         required: true,
       },
-      email: {
+      selleremail: {
         type: String,
         required: true,
-        unique: true,
       },
       phoneNo: {
         mobile: {

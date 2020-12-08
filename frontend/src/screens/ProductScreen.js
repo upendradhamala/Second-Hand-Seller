@@ -1,15 +1,21 @@
 import React, { useState, useEffect } from 'react'
+import Meta from '../components/Meta'
 import { Row, Col, Image, ListGroup, Card, Button, Form } from 'react-bootstrap'
 import { useDispatch, useSelector } from 'react-redux'
 import { Link } from 'react-router-dom'
 import Message from '../components/Message'
 import Loader from '../components/Loader'
 import Carousel from 'react-bootstrap/Carousel'
-import { listProductDetails } from '../actions/productActions'
+import {
+  listProductDetails,
+  createProductReview,
+} from '../actions/productActions'
 import { sendEmail } from '../actions/userActions'
-
+import { PRODUCT_REVIEW_RESET } from '../types/productConstants'
 const ProductScreen = ({ match, history }) => {
   const [text, setText] = useState('')
+  const [comment, setComment] = useState('')
+
   const [sendMail, setSendMail] = useState(false)
   const [emailSent, setEmailSent] = useState(false)
 
@@ -20,26 +26,45 @@ const ProductScreen = ({ match, history }) => {
     error: errorEmail,
     data: dataEmail,
   } = emailReducer
-  // console.log(responses)
+
+  const productReviewCreate = useSelector((state) => state.productReviewCreate)
+  const {
+    loading: loadingReview,
+    error: errorReview,
+    success: successReview,
+  } = productReviewCreate
+
   const userLogin = useSelector((state) => state.userLogin)
   const { userData } = userLogin
   useEffect(() => {
+    if (successReview) {
+      setComment('')
+      dispatch({
+        type: PRODUCT_REVIEW_RESET,
+      })
+    }
     dispatch(listProductDetails(match.params.id))
-  }, [match.params.id, dispatch])
+  }, [match.params.id, dispatch, successReview])
 
   const productDetails = useSelector((state) => state.productDetails)
   const { loading, error, product } = productDetails
+  const submitHandler = (e) => {
+    e.preventDefault()
+    dispatch(createProductReview(match.params.id, comment))
+  }
   const emailSubmit = (e) => {
     e.preventDefault()
     setEmailSent(true)
 
     dispatch(
       sendEmail(
-        product?.seller?.email,
+        product?.seller?.selleremail,
         text,
         userData?.name,
         userData?.address,
-        product?.name
+        product?.name,
+        userData?.email,
+        userData?.contact?.phone_no
       )
     )
 
@@ -61,12 +86,23 @@ const ProductScreen = ({ match, history }) => {
       <Link to='/' className='btn btn-success my-3'>
         Go Back
       </Link>
+      <br />
+      {userData && userData._id === product.user && (
+        <Link
+          to={`/admin/product/${match.params.id}/edit`}
+          className='btn btn-primary my-3'
+        >
+          Edit Product
+        </Link>
+      )}
+
       {loading ? (
         <Loader />
       ) : error ? (
         <Message variant='danger'>{error}</Message>
       ) : (
         <>
+          <Meta title={product.name} />
           <Row className='row mb-2'>
             <Col md={6} className='image-area'>
               <Carousel>
@@ -74,7 +110,7 @@ const ProductScreen = ({ match, history }) => {
                   <Carousel.Item key={image._id}>
                     <Image
                       className='d-block w-100'
-                      src={image.image1}
+                      src={image?.image1}
                       alt='First slide'
                     />
                   </Carousel.Item>
@@ -93,7 +129,7 @@ const ProductScreen = ({ match, history }) => {
                     <li> Product Id:</li>
                     <li> Product:</li>
                     <li> Posted On:</li>
-                    <li>Post Expires:</li>
+                    <li> Expires On:</li>
                     <li></li>
                   </ul>
                 </Col>
@@ -123,7 +159,7 @@ const ProductScreen = ({ match, history }) => {
                     <span className='text-area2'>Send Email</span>
 
                     <p className='text-area3'>
-                      Get in touch with {product?.seller?.name}
+                      Get in touch with {product?.seller?.sellername}
                     </p>
                   </div>
                   <Row>
@@ -147,9 +183,9 @@ const ProductScreen = ({ match, history }) => {
                           <i className='far fa-window-close'></i>
                         </button>
                       </p>
-                      <li>upendra</li>
-                      <li>dhamalaupendra@gmail.com</li>
-                      <li>9864421289</li>
+                      <li>{userData.name}</li>
+                      <li>{userData.email}</li>
+                      <li>{userData?.contact?.phone_no}</li>
                       <li>
                         <textarea
                           style={{ maxWidth: '100%', borderRadius: '5px' }}
@@ -178,7 +214,7 @@ const ProductScreen = ({ match, history }) => {
               </p>
 
               <Row className='mb-2'>
-                <Col className='product' md={5} sm={4} xs={1}>
+                <Col className='product' md={4} sm={2} xs={2}>
                   <ul>
                     <li> Name:</li>
 
@@ -188,12 +224,12 @@ const ProductScreen = ({ match, history }) => {
                     <li></li>
                   </ul>
                 </Col>
-                <Col md={7} sm={8} xs={11}>
+                <Col md={8} sm={10} xs={10}>
                   <ul>
-                    <li>{product?.seller?.name}</li>
+                    <li>{product?.seller?.sellername}</li>
 
                     <li>
-                      {product?.seller?.email}{' '}
+                      {/* {product?.seller?.selleremail}{' '} */}
                       <span>
                         <button
                           className='emailbutton btn-success'
@@ -203,7 +239,7 @@ const ProductScreen = ({ match, history }) => {
                         </button>
                       </span>
                     </li>
-                    <li>{product?.seller?.address}</li>
+                    <li>{product?.seller?.selleraddress}</li>
                     <li>
                       {product?.seller?.phoneNo?.mobile}{' '}
                       <span>
@@ -288,6 +324,59 @@ const ProductScreen = ({ match, history }) => {
                   </ul>
                 </Col>
               </Row>
+            </Col>
+          </Row>
+          <Row className='mt-3'>
+            <Col md={6}>
+              <h4>Buyer's Speak</h4>
+              {product.reviews.length === 0 && (
+                <Message variant='primary'>Be the First One to Review</Message>
+              )}
+              <ListGroup variant='flush'>
+                {product.reviews.map((review) => (
+                  <ListGroup.Item key={review._id}>
+                    {/* <strong>{review.name}</strong>
+                    <p>{review.createdAt.substring(0, 10)}</p> */}
+                    <p>
+                      Q.<span className='comment'> {review.comment} </span>
+                      <span className='review'>
+                        --Posted By <strong>{review.name}</strong> on{' '}
+                        <strong> {review.createdAt.substring(0, 10)} </strong>
+                      </span>
+                    </p>
+                  </ListGroup.Item>
+                ))}
+
+                <ListGroup.Item>
+                  <p>Post Your Speak</p>
+                  {errorReview && (
+                    <Message variant='danger'>{errorReview}</Message>
+                  )}
+
+                  {loadingReview && <Loader />}
+                  {userData ? (
+                    <Form onSubmit={submitHandler}>
+                      <Form.Group controlId='comment'>
+                        {/* <Form.Label>Comment</Form.Label> */}
+                        <Form.Control
+                          as='textarea'
+                          row='3'
+                          value={comment}
+                          onChange={(e) => setComment(e.target.value)}
+                        ></Form.Control>
+                      </Form.Group>
+                      <Button type='submit' variant='primary'>
+                        Post
+                      </Button>
+                    </Form>
+                  ) : (
+                    <Message variant='primary'>
+                      You must <Link to='/login'>Log In</Link> to post your
+                      speak{' '}
+                    </Message>
+                  )}
+                </ListGroup.Item>
+              </ListGroup>
             </Col>
           </Row>
         </>

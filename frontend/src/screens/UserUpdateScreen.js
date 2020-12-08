@@ -1,47 +1,81 @@
 import React, { useState, useEffect } from 'react'
-import { Link } from 'react-router-dom'
-import { Row, Col, Button, Form } from 'react-bootstrap'
+import { Form, Button } from 'react-bootstrap'
 import { useDispatch, useSelector } from 'react-redux'
 import Message from '../components/Message'
 import Loader from '../components/Loader'
-import { register } from '../actions/userActions'
+import { updateUser, getUserDetails } from '../actions/userActions'
 import FormContainer from '../components/FormContainer'
-const RegisterScreen = ({ location, history }) => {
+import { USER_UPDATE_RESET, USER_DETAILS_RESET } from '../types/userConstants'
+const UserUpdateScreen = ({ history, match }) => {
+  const userId = match.params.id
+
   const [name, setName] = useState('')
-
-  const [email, setEmail] = useState('')
   const [address, setAddress] = useState('')
-  const [contact, setContact] = useState('')
-
+  const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [confirmPassword, setConfirmPassword] = useState('')
+
+  const [phone_no, setPhone_no] = useState('')
   const [message, setMessage] = useState(null)
+
   const dispatch = useDispatch()
-  const userRegister = useSelector((state) => state.userRegister)
-  const { userData, loading, error } = userRegister
-  const redirect = location.search ? location.search.split('=')[1] : '/'
+  const userLogin = useSelector((state) => state.userLogin)
+  const { userData } = userLogin
+  const userUpdate = useSelector((state) => state.userUpdate)
+  const { success, loading, error } = userUpdate
+
+  const userDetails = useSelector((state) => state.userDetails)
+  const { user, loading: loadingDetails } = userDetails
   useEffect(() => {
-    if (userData) {
-      history.push(redirect)
+    if (!userData || success) {
+      dispatch({ type: USER_UPDATE_RESET })
+      dispatch({ type: USER_DETAILS_RESET })
+      
+      if (userData && userData.isAdmin) {
+        history.push('/admin/userlist')
+      } else {
+        history.push('/')
+      }
+    } else {
+      
+      if (!user?.name) {
+        dispatch(getUserDetails(userId))
+      } else {
+        setName(user.name)
+        setAddress(user.address)
+        setPhone_no(user?.contact?.phone_no)
+        setEmail(user.email)
+      }
     }
-  }, [history, userData, redirect])
+  }, [history, userData, user, success, dispatch, userId])
+
   const submitHandler = (e) => {
     e.preventDefault()
-    // dispatch(login(email, password))
     if (password !== confirmPassword) {
       setMessage('Passwords do not match')
-
       setTimeout(() => {
         setMessage(null)
       }, 3000)
     } else {
-      dispatch(register(name, email, password, contact, address))
+      dispatch(
+        updateUser({
+          _id: userId,
+          name,
+          email,
+          password,
+          address,
+
+          phone_no,
+        })
+      )
     }
   }
   return (
     <FormContainer>
-      <h1>SIGN UP</h1>
-      <Form onSubmit={submitHandler} className='mt-5'>
+      <h1>Details</h1>
+
+      {loadingDetails && <Loader />}
+      <Form onSubmit={submitHandler} className='mt-5 mb-2'>
         <Form.Group controlId='name'>
           <Form.Label>Name</Form.Label>
           <Form.Control
@@ -49,7 +83,6 @@ const RegisterScreen = ({ location, history }) => {
             placeholder='Enter Name'
             value={name}
             onChange={(e) => setName(e.target.value)}
-            required
           ></Form.Control>
         </Form.Group>
         <Form.Group controlId='email'>
@@ -65,7 +98,6 @@ const RegisterScreen = ({ location, history }) => {
             placeholder='Enter Email'
             value={email}
             onChange={(e) => setEmail(e.target.value)}
-            required
           ></Form.Control>
         </Form.Group>
         <Form.Group controlId='address'>
@@ -75,7 +107,6 @@ const RegisterScreen = ({ location, history }) => {
             placeholder='Enter Address'
             value={address}
             onChange={(e) => setAddress(e.target.value)}
-            required
           ></Form.Control>
         </Form.Group>
         <Form.Group controlId='contact No'>
@@ -88,9 +119,8 @@ const RegisterScreen = ({ location, history }) => {
           <Form.Control
             type='contact'
             placeholder='Enter Mobile No'
-            value={contact}
-            onChange={(e) => setContact(e.target.value)}
-            required
+            value={phone_no}
+            onChange={(e) => setPhone_no(e.target.value)}
           ></Form.Control>
         </Form.Group>
 
@@ -101,7 +131,6 @@ const RegisterScreen = ({ location, history }) => {
             placeholder='Enter password'
             value={password}
             onChange={(e) => setPassword(e.target.value)}
-            required
           ></Form.Control>
         </Form.Group>
         <Form.Group controlId='confirmpassword'>
@@ -111,33 +140,21 @@ const RegisterScreen = ({ location, history }) => {
             placeholder='Confirm Password'
             value={confirmPassword}
             onChange={(e) => setConfirmPassword(e.target.value)}
-            required
           ></Form.Control>
         </Form.Group>
+        {loading && <Loader />}
+
         <Button type='submit' variant='primary'>
-          Register
+          Update Profile
         </Button>
-      </Form>{' '}
-      <Row className='py-3'>
-        <Col>
-          Already Have an Account?
-          {/* here redirect is like storing previous request 
-          if i am not logged in and then click on add to cart item then it will redirect me to 
-          login page and if i am not registerd then i need to register and after registration i will be
-          again redirected to shipping page  */}
-          <Link
-            className='underlined1 '
-            to={redirect ? `/login?redirect=${redirect}` : '/login'}
-          >
-            <span className='btn-primary'> Login</span>
-          </Link>
-        </Col>
-      </Row>
+      </Form>
       {message && <Message variant='danger'>{message}</Message>}
       {error && <Message variant='danger'>{error}</Message>}
-      {loading && <Loader />}
+      {success && (
+        <Message variant='success'>Profile updated successfully</Message>
+      )}
     </FormContainer>
   )
 }
 
-export default RegisterScreen
+export default UserUpdateScreen

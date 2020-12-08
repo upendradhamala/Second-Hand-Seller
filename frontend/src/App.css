@@ -10,7 +10,7 @@ img{
 
 body{
   font-family: 'Montserrat', sans-serif;
-  font-weight: 500;
+  font-weight: 800;
 
 }
 .name-label{
@@ -209,4 +209,89 @@ color:white;
   background: none;
 }
 
+.form-control{
+  /* border:2px solid red; */
+  font-weight: 700;
 
+}
+.review{
+  font-style: italic;
+margin-left: 12px;
+font-size: 11px;
+}
+.comment{
+  font-size: 13px;
+  margin-left: 5px;
+}
+
+.textcolor{
+  color:white;
+  /* background: red; */
+}
+
+.paginate{
+
+  justify-content: center;
+}
+
+.slanted{
+  font-style: italic;
+}
+
+.fa-phone{
+  /* border: 2px solid red; */
+  padding:1rem;
+  padding-bottom: 0.5rem;
+  color:green;
+  font-size: 15px;
+
+}
+.fa-envelope-square{
+  color:red;
+  padding:1rem;
+  padding-bottom: 0.5rem;
+  font-size: 15px;
+
+}
+
+.more-info{
+  /* padding:1rem; */
+  /* border:2px solid red; */
+  margin-right: .5rem;
+  margin-left: .9rem;
+  
+}
+
+.aboutpage{
+  border:2px solid rgb(0, 223, 11);
+  border-bottom: none;
+  border-radius: 10px;
+  background: rgb(216, 216, 190);
+  /* color:white; */
+}
+
+.aboutpage1{
+  border:2px solid rgb(0, 223, 11);
+  border-radius: 10px;
+  background: rgb(216, 216, 190);
+  /* color:white; */
+
+
+
+}
+
+
+
+.aboutbody p{
+  line-height: 20px;
+
+
+}
+
+.docenter{
+  margin-top: 3rem;
+  /* border:2px solid rgb(0, 223, 11); */
+  justify-content: center;
+
+
+}

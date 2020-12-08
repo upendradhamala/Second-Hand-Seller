@@ -9,8 +9,7 @@ dotenv.config()
 const authUser = asyncHandler(async (req, res) => {
   const { email, password } = req.body
   const user = await User.findOne({ email })
-
-  console.log(await user.matchPassword(password))
+  // console.log(user)
 
   if (user && (await user.matchPassword(password))) {
     res.json({
@@ -56,7 +55,7 @@ const registerUser = asyncHandler(async (req, res) => {
 
   if (userExists) {
     res.status(400)
-    throw new Error('User already exists')
+    throw new Error('Email is already registered')
   }
   const validatePassword = password.length
 
@@ -70,6 +69,11 @@ const registerUser = asyncHandler(async (req, res) => {
   if (validateContact !== 10) {
     res.status(400)
     throw new Error('Enter 10 digit mobile number')
+  }
+
+  if (!phone_no.startsWith('9')) {
+    res.status(400)
+    throw new Error('Mobile Number must start with 9')
   }
   const user = await User.create({
     name,
@@ -96,7 +100,15 @@ const registerUser = asyncHandler(async (req, res) => {
 })
 
 const emailSend = asyncHandler(async (req, res) => {
-  const { receiver, text, name, address, productName } = req.body
+  const {
+    receiver,
+    text,
+    name,
+    address,
+    productName,
+    email,
+    phone_no,
+  } = req.body
   console.log(req.body)
 
   var transporter = nodemailer.createTransport({
@@ -108,13 +120,15 @@ const emailSend = asyncHandler(async (req, res) => {
   })
 
   var mailOptions = {
-    from: '',
+    from: 'secondhandnepal77@gmail.co',
     to: receiver,
     subject: 'Second Hand Buy Sell Nepal',
 
     html: `<div style="background:#31686e;text-align:center;color:white">One of the Second Hand Nepal User wants
     to buy your ${productName}. </div><br/>
-    <p>His/Her name is ${name} and is a resident of ${address}</p>
+    <p>His/Her name is ${name} and is a resident of ${address}.His/Her
+    email is: ${email} and registered contact no is: ${phone_no}.</p>
+
     He/She says:  ${text}`,
   }
 
@@ -128,4 +142,86 @@ const emailSend = asyncHandler(async (req, res) => {
     }
   })
 })
-export { authUser, getUserProfile, registerUser, emailSend }
+
+//get all users by admin only
+
+const getUsers = asyncHandler(async (req, res) => {
+  const users = await User.find({})
+  res.json(users)
+})
+
+//delete user
+const deleteUser = asyncHandler(async (req, res) => {
+  const user = await User.findById(req.params.id)
+  if (user) {
+    await user.remove()
+    res.json({ message: 'User removed' })
+  } else {
+    res.status(404)
+    throw new Error('User not found')
+  }
+})
+//upadte user profile
+
+const updateUserProfile = asyncHandler(async (req, res) => {
+  // const user = await User.findById(req.params.id)
+  const { name, email, password, address, phone_no } = req.body
+  console.log('the body is ')
+  console.log(req.body)
+  const user = await User.findById(req.params.id)
+  console.log('id')
+  console.log(req.params.id)
+
+  if (user) {
+    if (req.user._id.toString() === user._id.toString() || req.user.isAdmin) {
+      ;(user.name = name || user.name),
+        (user.email = email || user.email),
+        (user.address = address || user.address),
+        (user.password = password || user.password),
+        (user.contact.phone_no = phone_no || user.contact.phone_no)
+      const updatedUser = await user.save()
+      res.status(201).json({
+        _id: updatedUser._id,
+        name: updatedUser.name,
+        email: updatedUser.email,
+
+        address: updatedUser.address,
+        contact: updatedUser.contact,
+      })
+    } else {
+      res.status(401)
+      throw new Error('You cannot perform this action')
+    }
+  } else {
+    res.status(404)
+    throw new Error('No user found')
+  }
+})
+
+//get user by id
+
+const getUserById = asyncHandler(async (req, res) => {
+  const user = await User.findById(req.params.id).select('-password')
+  console.log('user is')
+  console.log(user)
+  if (
+    (user && user._id.toString() === req.user._id.toString()) ||
+    req.user.isAdmin
+  ) {
+    res.json(user)
+  } else {
+    res.status(404)
+    throw new Error('User not found')
+  }
+})
+
+export {
+  authUser,
+  getUserProfile,
+  registerUser,
+  emailSend,
+  getUsers,
+  deleteUser,
+  updateUserProfile,
+  getUserById,
+}
