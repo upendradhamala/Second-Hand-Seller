@@ -66,7 +66,7 @@ const ProductEditScreen = ({ match, history }) => {
     const formData = new FormData()
 
     formData.append('images', file)
-   
+
     setUploading(true)
     try {
       const config = {
@@ -75,7 +75,7 @@ const ProductEditScreen = ({ match, history }) => {
         },
       }
       const { data } = await axios.post('/api/uploads', formData, config)
-     
+
       setImages(data)
       setUploading(false)
     } catch (error) {
@@ -102,7 +102,6 @@ const ProductEditScreen = ({ match, history }) => {
   }
   return (
     <>
-    
       <FormContainer>
         <h1>Edit Product</h1>
 
@@ -162,7 +161,6 @@ const ProductEditScreen = ({ match, history }) => {
               ></Form.Control>
             </Form.Group>
 
-           
             <Form.Group controlId='expiresOn'>
               <Form.Label>How long is your product for sale? </Form.Label>
               <Form.Control
@@ -181,6 +179,16 @@ const ProductEditScreen = ({ match, history }) => {
                 onChange={(e) => setPrice(e.target.value)}
               ></Form.Control>
             </Form.Group>
+
+            <Form.Group className='mb-5 mt-5' controlId='negotiable'>
+              <Form.Check
+                type='checkbox'
+                label='Is the price Negotiable?'
+                checked={negotiable}
+                onChange={(e) => setNegotiable(e.target.checked)}
+              ></Form.Check>
+            </Form.Group>
+
             <Form.Group controlId='shippingaddress'>
               <Form.Label>Shipping Address </Form.Label>
               <Form.Control
@@ -201,16 +209,7 @@ const ProductEditScreen = ({ match, history }) => {
               ></Form.Control>
             </Form.Group>
 
-            <Form.Group controlId='negotiable'>
-              <Form.Check
-                type='checkbox'
-                label='Is the price Negotiable?'
-                checked={negotiable}
-                onChange={(e) => setNegotiable(e.target.checked)}
-              ></Form.Check>
-            </Form.Group>
-
-            <Button type='submit' variant='primary'>
+            <Button className='mb-2' type='submit' variant='primary'>
               Update
             </Button>
           </Form>

@@ -61,7 +61,24 @@ const createProduct = asyncHandler(async (req, res) => {
     price,
     negotiable,
   } = req.body
-  console.log(req.body)
+
+  var x = new Date(expiresOn)
+  var y = new Date(Date.now())
+
+  if (
+    !(
+      images[0].image1.startsWith('https://') ||
+      images[0].image1.startsWith('data:') ||
+      images[0].image1.startsWith('/uploads/images-')
+    )
+  ) {
+    res.status(400)
+    throw new Error('Invalid Image Data')
+  }
+  if (x < y) {
+    res.status(400)
+    throw new Error('Put the upcoming date')
+  }
   const product = await Product.create({
     name,
     images,
@@ -106,12 +123,26 @@ const updateProduct = asyncHandler(async (req, res) => {
     price,
     negotiable,
   } = req.body
-  console.log(req.body)
-  console.log(req.body.images)
+
   const product = await Product.findById(req.params.id)
 
-  console.log(product.shippingAddress.address)
+  var x = new Date(expiresOn)
+  var y = new Date(Date.now())
 
+  if (
+    !(
+      images[0].image1.startsWith('https://') ||
+      images[0].image1.startsWith('data:') ||
+      images[0].image1.startsWith('/uploads/images-')
+    )
+  ) {
+    res.status(400)
+    throw new Error('Invalid Image Data')
+  }
+  if (x < y) {
+    res.status(400)
+    throw new Error('Put the upcoming date')
+  }
   if (
     (product && product.user.toString() === req.user._id.toString()) ||
     (product && req.user.isAdmin)

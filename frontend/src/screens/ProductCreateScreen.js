@@ -82,8 +82,6 @@ const ProductCreateScreen = ({ history }) => {
         <h1>Upload Your Property</h1>
         {loading ? (
           <Loader />
-        ) : error ? (
-          <Message variant='danger'>{error}</Message>
         ) : (
           <Form onSubmit={submitHandler}>
             <Form.Group controlId='name'>
@@ -157,7 +155,7 @@ const ProductCreateScreen = ({ history }) => {
               ></Form.Control>
             </Form.Group>
 
-            <Form.Group controlId='price'>
+            <Form.Group className="mb-5"controlId='price'>
               <Form.Label>Price </Form.Label>
               <Form.Control
                 type='number'
@@ -167,7 +165,15 @@ const ProductCreateScreen = ({ history }) => {
                 required
               ></Form.Control>
             </Form.Group>
-            <Form.Group controlId='shippingaddress'>
+            <Form.Group controlId='negotiable'>
+              <Form.Check
+                type='checkbox'
+                label='Is the price Negotiable?'
+                checked={negotiable}
+                onChange={(e) => setNegotiable(e.target.checked)}
+              ></Form.Check>
+            </Form.Group>
+            <Form.Group className="mt-5" controlId='shippingaddress'>
               <Form.Label>Shipping Address </Form.Label>
               <Form.Control
                 type='text'
@@ -189,18 +195,12 @@ const ProductCreateScreen = ({ history }) => {
               ></Form.Control>
             </Form.Group>
 
-            <Form.Group controlId='negotiable'>
-              <Form.Check
-                type='checkbox'
-                label='Is the price Negotiable?'
-                checked={negotiable}
-                onChange={(e) => setNegotiable(e.target.checked)}
-              ></Form.Check>
-            </Form.Group>
+           
 
-            <Button type='submit' variant='primary'>
+            <Button className='mb-1' type='submit' variant='primary'>
               Upload your property
             </Button>
+            {error && <Message variant='danger'>{error}</Message>}
           </Form>
         )}
       </FormContainer>

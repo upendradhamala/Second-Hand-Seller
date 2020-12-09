@@ -87,9 +87,10 @@ li{
 .borderaround{
   
   border:1px solid rgb(190, 190, 211);
-  max-height: 145px;
+  max-height: 500px;
   /* margin:0.1rem; */
   margin-top: 1rem;
+  overflow: hidden;
   /* width:200px; */
 }
 .details{
@@ -98,8 +99,16 @@ li{
   margin-left: -15px;
   margin-right: -16px;
   color:white;
+  /* min-height: 1000px; */
 }
-
+.detailsdescription{
+  /* min-height: 1000px; */
+  /* border: 2px solid red; */
+  /* overflow: scroll; */
+}
+.setheight{
+  max-height: 140px;
+}
 .fa-info{
   color:rgb(197, 184, 0);
   /* padding:1rem; */

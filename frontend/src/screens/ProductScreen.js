@@ -118,7 +118,7 @@ const ProductScreen = ({ match, history }) => {
               </Carousel>
             </Col>
 
-            <Col className='borderaround' md={6}>
+            <Col className='borderaround setheight' md={6}>
               <p className='details'>
                 <i className='fas fa-info'></i> General Details
               </p>
@@ -276,13 +276,13 @@ const ProductScreen = ({ match, history }) => {
                 <i className='fas fa-info'></i> Pricing Details
               </p>
               <Row>
-                <Col className='product' md={6} sm={6} xs={3}>
+                <Col className='product' md={6} sm={6} xs={4}>
                   <ul>
                     <li>Total Price:</li>
                     {product?.Cost?.negotiable && <li>Negotiable:</li>}
                   </ul>
                 </Col>
-                <Col md={6} sm={6} xs={9}>
+                <Col md={6} sm={6} xs={8}>
                   <ul>
                     <li> Rs {product?.Cost?.price}</li>
                     {product?.Cost?.negotiable && <li>Yes</li>}
@@ -293,10 +293,10 @@ const ProductScreen = ({ match, history }) => {
           </Row>
           <Row>
             <Col className='borderaround mt-5' md={10} sm={12} xs={12}>
-              <p className='details'>
+              <p className='details '>
                 <i className='fas fa-info'></i> Description
               </p>
-              <p>{product.description}</p>
+              <p className='detailsdescription'>{product.description}</p>
             </Col>
           </Row>
           <Row>
@@ -309,7 +309,6 @@ const ProductScreen = ({ match, history }) => {
                   <ul>
                     <li>Delivery Area:</li>
                     <li>Delivery Charge:</li>
-                    <li>Delivery Time:</li>
                   </ul>
                 </Col>
                 <Col md={6} sm={6} xs={7}>
@@ -320,7 +319,6 @@ const ProductScreen = ({ match, history }) => {
                       Rs {''}
                       {product?.shippingAddress?.shippingCharge}
                     </li>
-                    <li> Within 3 days</li>
                   </ul>
                 </Col>
               </Row>
