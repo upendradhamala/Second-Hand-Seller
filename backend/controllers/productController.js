@@ -14,7 +14,9 @@ const getProducts = asyncHandler(async (req, res) => {
     : {}
 
   const count = await Product.countDocuments({ ...keyword })
-  const products = await Product.find({ ...keyword })
+  const products = await Product.find({ ...keyword }, null, {
+    sort: { createdAt: -1 },
+  })
     .limit(pageSize)
     .skip(pageSize * (page - 1))
   console.log(products)
@@ -49,6 +51,7 @@ const deleteProduct = asyncHandler(async (req, res) => {
 
 //upload products by logged in user
 const createProduct = asyncHandler(async (req, res) => {
+  console.log('create prouduct')
   const {
     name,
     images,
@@ -69,7 +72,8 @@ const createProduct = asyncHandler(async (req, res) => {
     !(
       images[0].image1.startsWith('https://') ||
       images[0].image1.startsWith('data:') ||
-      images[0].image1.startsWith('/uploads/images-')
+      images[0].image1.startsWith('/uploads/images-') ||
+      images[0].image1.startsWith('http://')
     )
   ) {
     res.status(400)
@@ -133,7 +137,8 @@ const updateProduct = asyncHandler(async (req, res) => {
     !(
       images[0].image1.startsWith('https://') ||
       images[0].image1.startsWith('data:') ||
-      images[0].image1.startsWith('/uploads/images-')
+      images[0].image1.startsWith('/uploads/images-') ||
+      images[0].image1.startsWith('http://')
     )
   ) {
     res.status(400)

@@ -1,4 +1,5 @@
 import axios from 'axios'
+
 import React, { useState, useEffect } from 'react'
 import { Form, Button } from 'react-bootstrap'
 import { useDispatch, useSelector } from 'react-redux'
@@ -8,7 +9,6 @@ import { createProduct } from '../actions/productActions'
 import FormContainer from '../components/FormContainer'
 const ProductCreateScreen = ({ history }) => {
   const [name, setName] = useState('')
-
   const [images, setImages] = useState('')
   const [uploading, setUploading] = useState(false)
 
@@ -23,43 +23,47 @@ const ProductCreateScreen = ({ history }) => {
 
   const dispatch = useDispatch()
   const productCreate = useSelector((state) => state.productCreate)
-  const { loading, error, data, success } = productCreate
+  const { loading, error, success } = productCreate
   const userLogin = useSelector((state) => state.userLogin)
   const { userData } = userLogin
-  useEffect(() => {
-    // if(!userData){
 
-    // }
+  useEffect(() => {
     if (success || !userData) {
       history.push('/')
     }
   }, [history, success, userData])
-  const uploadFileHandler = async (e) => {
-    const file = e.target.files[0]
-    console.log(file)
-    const formData = new FormData()
 
-    formData.append('images', file)
-    console.log(images)
-    console.log(formData)
+  const uploadFileHandler = async (e) => {
+    const { data: CLOUDINARY_URL } = await axios.get('/api/config/cloudinary')
+
+    const { data: CLOUDINARY_UPLOAD_PRESET } = await axios.get(
+      '/api/config/cloudinarypreset'
+    )
+
+    const file = e.target.files[0]
+    const formData = new FormData()
+    formData.append('file', file)
+    formData.append('upload_preset', CLOUDINARY_UPLOAD_PRESET)
     setUploading(true)
-    console.log('last line')
-    try {
-      const config = {
-        headers: {
-          'Content-Type': 'multipart/form-data',
-        },
-      }
-      const { data } = await axios.post('/api/uploads', formData, config)
-      console.log('data is')
-      console.log(data)
-      setImages(data)
-      setUploading(false)
-    } catch (error) {
-      console.error(error)
-      setUploading(false)
-    }
+    await axios({
+      url: CLOUDINARY_URL,
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded',
+      },
+      data: formData,
+    })
+      .then(function (res) {
+        console.log(res)
+        setImages(res.data.url)
+        console.log(images)
+      })
+      .catch(function (err) {
+        console.error(err)
+      })
+    setUploading(false)
   }
+
   const submitHandler = (e) => {
     e.preventDefault()
     dispatch(
@@ -97,7 +101,7 @@ const ProductCreateScreen = ({ history }) => {
 
             <Form.Group controlId='images'>
               <Form.Label>
-                Images <small> *Upload at least 1 image</small>{' '}
+                Images <small> *Upload Image only</small>{' '}
               </Form.Label>
               <Form.Control
                 type='text'
@@ -112,7 +116,16 @@ const ProductCreateScreen = ({ history }) => {
                 custom
                 onChange={uploadFileHandler}
               ></Form.File>
+
               {uploading && <Loader />}
+              {images && (
+                <img
+                  className='mt-2'
+                  src={images}
+                  style={{ height: '100px' }}
+                  alt='image1'
+                />
+              )}
             </Form.Group>
             <Form.Group controlId='category'>
               <Form.Label>Category </Form.Label>
@@ -127,13 +140,6 @@ const ProductCreateScreen = ({ history }) => {
 
             <Form.Group controlId='description'>
               <Form.Label>Describe your property </Form.Label>
-              {/* <Form.Control
-                type='text'
-                placeholder='Enter description'
-                value={description}
-                onChange={(e) => setDescription(e.target.value)}
-                required
-              ></Form.Control> */}
 
               <Form.Control
                 as='textarea'
@@ -155,7 +161,7 @@ const ProductCreateScreen = ({ history }) => {
               ></Form.Control>
             </Form.Group>
 
-            <Form.Group className="mb-5"controlId='price'>
+            <Form.Group className='mb-5' controlId='price'>
               <Form.Label>Price </Form.Label>
               <Form.Control
                 type='number'
@@ -173,7 +179,7 @@ const ProductCreateScreen = ({ history }) => {
                 onChange={(e) => setNegotiable(e.target.checked)}
               ></Form.Check>
             </Form.Group>
-            <Form.Group className="mt-5" controlId='shippingaddress'>
+            <Form.Group className='mt-5' controlId='shippingaddress'>
               <Form.Label>Shipping Address </Form.Label>
               <Form.Control
                 type='text'
@@ -194,8 +200,6 @@ const ProductCreateScreen = ({ history }) => {
                 required
               ></Form.Control>
             </Form.Group>
-
-           
 
             <Button className='mb-1' type='submit' variant='primary'>
               Upload your property

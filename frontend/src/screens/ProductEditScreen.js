@@ -61,28 +61,33 @@ const ProductEditScreen = ({ match, history }) => {
       setNegotiable(product?.Cost?.negotiable)
     }
   }, [history, dispatch, productId, product, successUpdate, userData])
+  const CLOUDINARY_URL = 'https://api.cloudinary.com/v1_1/dh3bp7vbd/upload'
+  const CLOUDINARY_UPLOAD_PRESET = 'qwdzopo4'
   const uploadFileHandler = async (e) => {
     const file = e.target.files[0]
     const formData = new FormData()
-
-    formData.append('images', file)
-
+    formData.append('file', file)
+    formData.append('upload_preset', CLOUDINARY_UPLOAD_PRESET)
     setUploading(true)
-    try {
-      const config = {
-        headers: {
-          'Content-Type': 'multipart/form-data',
-        },
-      }
-      const { data } = await axios.post('/api/uploads', formData, config)
-
-      setImages(data)
-      setUploading(false)
-    } catch (error) {
-      console.error(error)
-      setUploading(false)
-    }
+    await axios({
+      url: CLOUDINARY_URL,
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded',
+      },
+      data: formData,
+    })
+      .then(function (res) {
+        console.log(res)
+        setImages(res.data.url)
+        console.log(images)
+      })
+      .catch(function (err) {
+        console.error(err)
+      })
+    setUploading(false)
   }
+
   const submitHandler = (e) => {
     e.preventDefault()
     dispatch(
@@ -123,7 +128,7 @@ const ProductEditScreen = ({ match, history }) => {
 
             <Form.Group controlId='images'>
               <Form.Label>
-                Images <small> *Upload at least 1 images</small>{' '}
+                Images <small> *Upload Image only</small>{' '}
               </Form.Label>
               <Form.Control
                 type='text'
@@ -137,6 +142,14 @@ const ProductEditScreen = ({ match, history }) => {
                 custom
                 onChange={uploadFileHandler}
               ></Form.File>
+              {images && (
+                <img
+                  className='mt-2'
+                  src={images}
+                  style={{ height: '100px' }}
+                  alt='image1'
+                />
+              )}
               {uploading && <Loader />}
             </Form.Group>
             <Form.Group controlId='category'>

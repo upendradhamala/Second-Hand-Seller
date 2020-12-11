@@ -11,13 +11,13 @@
     "dev": "concurrently \"npm run server\" \"npm run client\"",
     "data:import": "node backend/seeder",
     "data:destroy": "node backend/seeder -d",
-    "heroku-postbuild":"NPM_CONFIG_PRODUCTION=false npm install --prefix frontend && npm run build --prefix frontend"
-
+    "heroku-postbuild": "NPM_CONFIG_PRODUCTION=false npm install --prefix frontend && npm run build --prefix frontend"
   },
   "author": "Upendra Dhamala",
   "license": "ISC",
   "dependencies": {
     "bcryptjs": "^2.4.3",
+    "cloudinary": "^1.23.0",
     "colors": "^1.4.0",
     "dotenv": "^8.2.0",
     "express": "^4.17.1",
@@ -27,6 +27,7 @@
     "jsonwebtoken": "^8.5.1",
     "mongoose": "^5.10.16",
     "multer": "^1.4.2",
+    "multer-storage-cloudinary": "^4.0.0",
     "nodemailer": "^6.4.16",
     "password-validator": "^5.1.1"
   },

@@ -338,8 +338,10 @@ const ProductScreen = ({ match, history }) => {
                     <p>
                       Q.<span className='comment'> {review.comment} </span>
                       <span className='review'>
-                        --Posted By <strong>{review.name}</strong> on{' '}
-                        <strong> {review.createdAt.substring(0, 10)} </strong>
+                        <span style={{ color: '#32a897',fontWeight:'800' }}>
+                          --Posted By <strong>{review.name}</strong> on{' '}
+                          <strong> {review.createdAt.substring(0, 10)} </strong>{' '}
+                        </span>
                       </span>
                     </p>
                   </ListGroup.Item>
