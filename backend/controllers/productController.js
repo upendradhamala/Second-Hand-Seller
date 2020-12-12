@@ -64,7 +64,27 @@ const createProduct = asyncHandler(async (req, res) => {
     price,
     negotiable,
   } = req.body
+  const validatename = name.length
+  const validatedescription = description.length
+  const validateaddress = address.length
+  const validatecategory = category.length
 
+  if (validatename < 3) {
+    res.status(400)
+    throw new Error('Name must be of 3 characters  or more length ')
+  }
+  if (validatedescription < 7) {
+    res.status(400)
+    throw new Error('Description must be of 7 characters  or more length ')
+  }
+  if (validateaddress < 5) {
+    res.status(400)
+    throw new Error('Address must be of 5 characters  or more length ')
+  }
+  if (validatecategory < 5) {
+    res.status(400)
+    throw new Error('Category must be of 5 characters  or more length ')
+  }
   var x = new Date(expiresOn)
   var y = new Date(Date.now())
 

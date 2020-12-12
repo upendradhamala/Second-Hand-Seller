@@ -54,9 +54,7 @@ const ProductCreateScreen = ({ history }) => {
       data: formData,
     })
       .then(function (res) {
-        console.log(res)
         setImages(res.data.url)
-        console.log(images)
       })
       .catch(function (err) {
         console.error(err)
@@ -101,15 +99,9 @@ const ProductCreateScreen = ({ history }) => {
 
             <Form.Group controlId='images'>
               <Form.Label>
-                Images <small> *Upload Image only</small>{' '}
+                Image <small> *Upload Image only</small>{' '}
               </Form.Label>
-              <Form.Control
-                type='text'
-                placeholder='Enter image url or Upload Image'
-                value={images}
-                onChange={(e) => setImages(e.target.value)}
-                required
-              ></Form.Control>
+
               <Form.File
                 id='image-file'
                 label='Choose File'

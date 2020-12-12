@@ -57,11 +57,22 @@ const registerUser = asyncHandler(async (req, res) => {
     res.status(400)
     throw new Error('Email is already registered')
   }
+  const validatename = name.length
+  const validateaddress = address.length
   const validatePassword = password.length
 
-  if (validatePassword <= 6) {
+  if (validatename < 3) {
     res.status(400)
-    throw new Error('Password length must be greater than 6')
+    throw new Error('Name must be of 3 characters  or more length ')
+  }
+
+  if (validateaddress < 5) {
+    res.status(400)
+    throw new Error('Address must be of 5 characters  or more length ')
+  }
+  if (validatePassword <6) {
+    res.status(400)
+    throw new Error('Password length must be greater than 5')
   }
 
   const validateContact = contact.phone_no.length
