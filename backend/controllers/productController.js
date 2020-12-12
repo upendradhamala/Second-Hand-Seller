@@ -88,16 +88,9 @@ const createProduct = asyncHandler(async (req, res) => {
   var x = new Date(expiresOn)
   var y = new Date(Date.now())
 
-  if (
-    !(
-      images[0].image1.startsWith('https://') ||
-      images[0].image1.startsWith('data:') ||
-      images[0].image1.startsWith('/uploads/images-') ||
-      images[0].image1.startsWith('http://')
-    )
-  ) {
+  if (images[0].image1 === '') {
     res.status(400)
-    throw new Error('Invalid Image Data')
+    throw new Error('Upload an Image')
   }
   if (x < y) {
     res.status(400)
@@ -153,17 +146,6 @@ const updateProduct = asyncHandler(async (req, res) => {
   var x = new Date(expiresOn)
   var y = new Date(Date.now())
 
-  if (
-    !(
-      images[0].image1.startsWith('https://') ||
-      images[0].image1.startsWith('data:') ||
-      images[0].image1.startsWith('/uploads/images-') ||
-      images[0].image1.startsWith('http://')
-    )
-  ) {
-    res.status(400)
-    throw new Error('Invalid Image Data')
-  }
   if (x < y) {
     res.status(400)
     throw new Error('Put the upcoming date')
