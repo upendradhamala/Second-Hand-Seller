@@ -1,6 +1,7 @@
 import asyncHandler from 'express-async-handler'
 import User from '../models/userModel.js'
 import dotenv from 'dotenv'
+import jwt from 'jsonwebtoken'
 
 import generateToken from '../utils/generateToken.js'
 import nodemailer from 'nodemailer'
@@ -48,8 +49,9 @@ const getUserProfile = asyncHandler(async (req, res) => {
 })
 
 //register a new user
-const registerUser = asyncHandler(async (req, res) => {
+const verificationLink = asyncHandler(async (req, res) => {
   const { name, email, password, contact, address } = req.body
+  console.log(req.body)
   const { phone_no } = contact
   const userExists = await User.findOne({ email })
 
@@ -70,7 +72,7 @@ const registerUser = asyncHandler(async (req, res) => {
     res.status(400)
     throw new Error('Address must be of 5 characters  or more length ')
   }
-  if (validatePassword <6) {
+  if (validatePassword < 6) {
     res.status(400)
     throw new Error('Password length must be greater than 5')
   }
@@ -86,27 +88,82 @@ const registerUser = asyncHandler(async (req, res) => {
     res.status(400)
     throw new Error('Mobile Number must start with 9')
   }
-  const user = await User.create({
-    name,
-    email,
-    password,
-    contact,
-    address,
+  const tokengenerate = jwt.sign(
+    { name, email, password, contact, address },
+    process.env.JWT_SECRET,
+    { expiresIn: '10m' }
+  )
+  //send email to regitering user
+  var transporter = nodemailer.createTransport({
+    service: 'gmail',
+    auth: {
+      user: process.env.USER,
+      pass: process.env.PASSWORD,
+    },
   })
 
-  if (user) {
-    res.status(201).json({
-      _id: user._id,
-      name: user.name,
-      email: user.email,
-      isAdmin: user.isAdmin,
-      token: generateToken(user._id),
-      address: user.address,
-      contact: user.contact,
+  var mailOptions = {
+    from: 'KinBech.com',
+    to: email,
+    subject: 'Verify your account',
+
+    html: `<p>Please click on the link below to activate your account</p>
+    <a href="${process.env.EMAIL_URL}/verify/${tokengenerate}">${process.env.EMAIL_URL}/verify/${tokengenerate}</a>`,
+  }
+
+  transporter.sendMail(mailOptions, function (error, info) {
+    if (error) {
+      res.status(400)
+      throw new Error(error)
+    } else {
+      console.log('Email sent: ' + info.response)
+      res.status(201).json({
+        response:
+          'A verification link has been sent to your Email. Verify it at first.',
+      })
+    }
+  })
+})
+const registerUser = asyncHandler(async (req, res) => {
+  const { token } = req.body
+  if (token) {
+    jwt.verify(token, process.env.JWT_SECRET, async (err, decodedToken) => {
+      if (err) {
+        res.status(400)
+        throw new Error('Token expired')
+      } else {
+        const { name, email, password, contact, address } = decodedToken
+        const userExists = await User.findOne({ email })
+
+        if (userExists) {
+          res.status(400)
+          throw new Error('Email is already registered')
+        } else {
+          const user = await User.create({
+            name,
+            email,
+            password,
+            contact,
+            address,
+          })
+
+          if (user) {
+            res.status(201).json({
+              _id: user._id,
+              name: user.name,
+              email: user.email,
+              isAdmin: user.isAdmin,
+              token: generateToken(user._id),
+              address: user.address,
+              contact: user.contact,
+            })
+          } else {
+            res.status(400)
+            throw new Error('Invalid User Data')
+          }
+        }
+      }
     })
-  } else {
-    res.status(400)
-    throw new Error('Invalid User Data')
   }
 })
 
@@ -131,11 +188,11 @@ const emailSend = asyncHandler(async (req, res) => {
   })
 
   var mailOptions = {
-    from: 'secondhandnepal77@gmail.co',
+    from: 'KinBech.com',
     to: receiver,
-    subject: 'Second Hand Buy Sell Nepal',
+    subject: 'KinBech.com',
 
-    html: `<div style="background:#31686e;text-align:center;color:white">One of the Second Hand Nepal User wants
+    html: `<div style="background:#31686e;text-align:center;color:white">One of the KinBech.com user wants
     to buy your ${productName}. </div><br/>
     <p>His/Her name is ${name} and is a resident of ${address}.His/Her
     email is: ${email} and registered contact no is: ${phone_no}.</p>
@@ -235,4 +292,5 @@ export {
   deleteUser,
   updateUserProfile,
   getUserById,
+  verificationLink,
 }

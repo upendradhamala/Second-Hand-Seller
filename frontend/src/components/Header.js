@@ -17,10 +17,7 @@ const Header = () => {
       <Navbar bg='dark' variant='dark' expand='lg' collapseOnSelect>
         <Container>
           <LinkContainer to='/'>
-            <Navbar.Brand>
-              Sell & Buy Anything
-              {/* <img className="logo" src={logo} alt='Second Hand Nepal' /> */}
-            </Navbar.Brand>
+            <Navbar.Brand>KinBech.com</Navbar.Brand>
           </LinkContainer>
           <Navbar.Toggle aria-controls='basic-navbar-nav' />
 

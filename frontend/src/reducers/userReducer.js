@@ -26,6 +26,10 @@ import {
   USER_UPDATE_REQUEST,
   USER_UPDATE_RESET,
   USER_UPDATE_SUCCESS,
+  USER_VERIFICATION_LINK_FAIL,
+  USER_VERIFICATION_LINK_REQUEST,
+  USER_VERIFICATION_LINK_RESET,
+  USER_VERIFICATION_LINK_SUCCESS,
 } from '../types/userConstants'
 
 export const userLoginReducer = (state = {}, action) => {
@@ -47,6 +51,31 @@ export const userLoginReducer = (state = {}, action) => {
       }
     case USER_LOGOUT:
       return {}
+    default:
+      return state
+  }
+}
+
+export const userVerificationReducer = (state = {}, action) => {
+  switch (action.type) {
+    case USER_VERIFICATION_LINK_REQUEST:
+      return {
+        loading: true,
+      }
+
+    case USER_VERIFICATION_LINK_SUCCESS:
+      return {
+        loading: false,
+        verification: action.payload,
+      }
+    case USER_VERIFICATION_LINK_FAIL:
+      return {
+        loading: false,
+        error: action.payload,
+      }
+    case USER_VERIFICATION_LINK_RESET:
+      return {}
+
     default:
       return state
   }

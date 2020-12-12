@@ -14,6 +14,7 @@ import UserUpdateScreen from '../src/screens/UserUpdateScreen'
 import AboutUsScreen from '../src/screens/AboutUsScreen'
 import NotFoundScreen from './screens/NotFoundScreen'
 import ProductCreateScreen from '../src/screens/ProductCreateScreen'
+import EmailVerificationScreen from '../src/screens/EmailVerificationScreen'
 
 const App = () => {
   return (
@@ -60,6 +61,11 @@ const App = () => {
               <Route
                 path='/admin/users/:id/edit'
                 component={UserUpdateScreen}
+                exact
+              />
+              <Route
+                path='/verify/:token'
+                component={EmailVerificationScreen}
                 exact
               />
               <Route component={NotFoundScreen} />

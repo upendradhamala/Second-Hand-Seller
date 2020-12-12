@@ -17,11 +17,13 @@ import {
   userDeleteReducer,
   userUpdateReducer,
   userDetailsReducer,
+  userVerificationReducer,
 } from './reducers/userReducer'
 const reducer = combineReducers({
   productList: productListReducer,
   productDetails: productDetailsReducer,
   userLogin: userLoginReducer,
+  userVerification: userVerificationReducer,
   userRegister: userRegisterReducer,
   emailReducer: emailReducer,
   usersList: userListReducer,

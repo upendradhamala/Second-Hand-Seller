@@ -1,10 +1,11 @@
 import React, { useState, useEffect } from 'react'
+import { Spinner } from 'react-bootstrap'
 import { Link } from 'react-router-dom'
 import { Row, Col, Button, Form } from 'react-bootstrap'
 import { useDispatch, useSelector } from 'react-redux'
 import Message from '../components/Message'
 import Loader from '../components/Loader'
-import { register } from '../actions/userActions'
+import { verify } from '../actions/userActions'
 import FormContainer from '../components/FormContainer'
 const RegisterScreen = ({ location, history }) => {
   const [name, setName] = useState('')
@@ -17,17 +18,22 @@ const RegisterScreen = ({ location, history }) => {
   const [confirmPassword, setConfirmPassword] = useState('')
   const [message, setMessage] = useState(null)
   const dispatch = useDispatch()
+  const userVerification = useSelector((state) => state.userVerification)
+  const { verification, loading, error } = userVerification
   const userRegister = useSelector((state) => state.userRegister)
-  const { userData, loading, error } = userRegister
+  const {
+    userData,
+    loading: loadingRegister,
+    error: errorRegister,
+  } = userRegister
   const redirect = location.search ? location.search.split('=')[1] : '/'
   useEffect(() => {
     if (userData) {
       history.push(redirect)
     }
-  }, [history, userData, redirect])
+  }, [history, redirect, userData])
   const submitHandler = (e) => {
     e.preventDefault()
-    // dispatch(login(email, password))
     if (password !== confirmPassword) {
       setMessage('Passwords do not match')
 
@@ -35,7 +41,7 @@ const RegisterScreen = ({ location, history }) => {
         setMessage(null)
       }, 3000)
     } else {
-      dispatch(register(name, email, password, contact, address))
+      dispatch(verify(name, email, password, contact, address))
     }
   }
   return (
@@ -114,28 +120,44 @@ const RegisterScreen = ({ location, history }) => {
             required
           ></Form.Control>
         </Form.Group>
+
         <Button type='submit' variant='primary'>
           Register
         </Button>
       </Form>{' '}
       <Row className='py-3'>
+        {/* {!loading && ()} */}
         <Col>
           Already Have an Account?
-          {/* here redirect is like storing previous request 
-          if i am not logged in and then click on add to cart item then it will redirect me to 
-          login page and if i am not registerd then i need to register and after registration i will be
-          again redirected to shipping page  */}
           <Link
             className='underlined1 '
             to={redirect ? `/login?redirect=${redirect}` : '/login'}
           >
-            <span className='btn-primary'> Login</span>
+            <span className='btn-primary mb-3 '> Login</span>
           </Link>
         </Col>
       </Row>
-      {message && <Message variant='danger'>{message}</Message>}
+      {loading && (
+        <Spinner
+          animation='border'
+          role='status'
+          variant='danger'
+          style={{
+            width: '100px',
+            margin: 'auto',
+            height: '100px',
+            margin: 'auto',
+            display: 'block',
+          }}
+        />
+      )}
+      {verification && (
+        <Message variant='success'>{verification.response}</Message>
+      )}
       {error && <Message variant='danger'>{error}</Message>}
-      {loading && <Loader />}
+      {message && <Message variant='danger'>{message}</Message>}
+      {errorRegister && <Message variant='danger'>{errorRegister}</Message>}
+      {loadingRegister && <Loader />}
     </FormContainer>
   )
 }

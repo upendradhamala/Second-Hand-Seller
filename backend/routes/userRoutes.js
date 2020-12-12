@@ -8,10 +8,12 @@ import {
   getUsers,
   deleteUser,
   updateUserProfile,
-  getUserById
+  getUserById,
+  verificationLink,
 } from '../controllers/userController.js'
 import { protect, admin } from '../middleware/authMiddleware.js'
 router.route('/').post(registerUser).get(protect, admin, getUsers)
+router.route('/verificationlink').post(verificationLink)
 router.post('/login', authUser)
 router.route('/profile').get(protect, getUserProfile)
 
