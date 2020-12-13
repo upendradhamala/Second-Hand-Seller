@@ -97,8 +97,8 @@ const verificationLink = asyncHandler(async (req, res) => {
   var transporter = nodemailer.createTransport({
     service: 'gmail',
     auth: {
-      user: process.env.USER,
-      pass: process.env.PASSWORD,
+      user: 'kinbech2077@gmail.com',
+      pass: 9868383125,
     },
   })
 
@@ -127,43 +127,41 @@ const verificationLink = asyncHandler(async (req, res) => {
 const registerUser = asyncHandler(async (req, res) => {
   const { token } = req.body
   if (token) {
-    jwt.verify(token, process.env.JWT_SECRET, async (err, decodedToken) => {
-      if (err) {
-        res.status(400)
-        throw new Error('Token expired')
+    const decoded = jwt.verify(token, process.env.JWT_SECRET)
+    console.log(decoded)
+    const { name, email, password, contact, address } = decoded
+    const userExists = await User.findOne({ email })
+
+    if (userExists) {
+      res.status(400)
+      throw new Error('You have already been verified')
+    } else {
+      const user = await User.create({
+        name,
+        email,
+        password,
+        contact,
+        address,
+      })
+
+      if (user) {
+        res.status(201).json({
+          _id: user._id,
+          name: user.name,
+          email: user.email,
+          isAdmin: user.isAdmin,
+          token: generateToken(user._id),
+          address: user.address,
+          contact: user.contact,
+        })
       } else {
-        const { name, email, password, contact, address } = decodedToken
-        const userExists = await User.findOne({ email })
-
-        if (userExists) {
-          res.status(400)
-          throw new Error('Email is already registered')
-        } else {
-          const user = await User.create({
-            name,
-            email,
-            password,
-            contact,
-            address,
-          })
-
-          if (user) {
-            res.status(201).json({
-              _id: user._id,
-              name: user.name,
-              email: user.email,
-              isAdmin: user.isAdmin,
-              token: generateToken(user._id),
-              address: user.address,
-              contact: user.contact,
-            })
-          } else {
-            res.status(400)
-            throw new Error('Invalid User Data')
-          }
-        }
+        res.status(400)
+        throw new Error('Invalid User Data')
       }
-    })
+    }
+  } else {
+    res.status(404)
+    throw new Error('No token found')
   }
 })
 
