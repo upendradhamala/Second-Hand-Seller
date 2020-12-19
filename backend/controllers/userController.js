@@ -97,8 +97,8 @@ const verificationLink = asyncHandler(async (req, res) => {
   var transporter = nodemailer.createTransport({
     service: 'gmail',
     auth: {
-      user: 'kinbech2077@gmail.com',
-      pass: 9868383125,
+      user: process.env.USER,
+      pass: process.env.PASSWORD,
     },
   })
 
