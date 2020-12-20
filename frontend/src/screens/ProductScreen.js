@@ -124,22 +124,22 @@ const ProductScreen = ({ match, history }) => {
               </p>
 
               <Row>
-                <Col className='product' md={4} sm={4} xs={4}>
+                <Col className='product  ' md={4} sm={4} xs={4}>
                   <ul>
                     <li> Product Id:</li>
-                    <li> Product:</li>
+
                     <li> Posted On:</li>
                     <li> Expires On:</li>
-                    <li></li>
+                    <li> Product:</li>
                   </ul>
                 </Col>
                 <Col md={8} sm={8} xs={8}>
                   <ul>
                     <li>{product._id}</li>
-                    <li> {product.name}</li>
+
                     <li>{product?.createdAt?.substring(0, 10)}</li>
                     <li>{product?.expiresOn?.substring(0, 10)}</li>
-                    <li></li>
+                    <li> {product.name}</li>
                   </ul>
                 </Col>
               </Row>
@@ -338,7 +338,7 @@ const ProductScreen = ({ match, history }) => {
                     <p>
                       Q.<span className='comment'> {review.comment} </span>
                       <span className='review'>
-                        <span style={{ color: '#32a897',fontWeight:'800' }}>
+                        <span style={{ color: '#32a897', fontWeight: '800' }}>
                           --Posted By <strong>{review.name}</strong> on{' '}
                           <strong> {review.createdAt.substring(0, 10)} </strong>{' '}
                         </span>

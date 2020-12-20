@@ -107,7 +107,7 @@ li{
   /* overflow: scroll; */
 }
 .setheight{
-  max-height: 140px;
+  max-height: 400px;
 }
 .fa-info{
   color:rgb(197, 184, 0);

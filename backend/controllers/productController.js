@@ -69,9 +69,9 @@ const createProduct = asyncHandler(async (req, res) => {
   const validateaddress = address.length
   const validatecategory = category.length
 
-  if (validatename < 3) {
+  if (validatename > 31) {
     res.status(400)
-    throw new Error('Name must be of 3 characters  or more length ')
+    throw new Error('Name must be at most 30 characters length ')
   }
   if (validatedescription < 7) {
     res.status(400)
