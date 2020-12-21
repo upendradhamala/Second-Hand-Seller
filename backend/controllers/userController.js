@@ -103,7 +103,7 @@ const verificationLink = asyncHandler(async (req, res) => {
   })
 
   var mailOptions = {
-    from: 'KinBech.com',
+    from: 'KinBechSaman.com',
     to: email,
     subject: 'Verify your account',
 
@@ -186,11 +186,11 @@ const emailSend = asyncHandler(async (req, res) => {
   })
 
   var mailOptions = {
-    from: 'KinBech.com',
+    from: 'KinBechSaman.com',
     to: receiver,
-    subject: 'KinBech.com',
+    subject: 'You have a buyer',
 
-    html: `<div style="background:#31686e;text-align:center;color:white">One of the KinBech.com user wants
+    html: `<div style="background:#31686e;text-align:center;color:white">One of the KinBechSaman.com user wants
     to buy your ${productName}. </div><br/>
     <p>His/Her name is ${name} and is a resident of ${address}.His/Her
     email is: ${email} and registered contact no is: ${phone_no}.</p>
