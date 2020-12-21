@@ -17,7 +17,7 @@ const Header = () => {
       <Navbar bg='dark' variant='dark' expand='lg' collapseOnSelect>
         <Container>
           <LinkContainer to='/'>
-            <Navbar.Brand>KinBech.com</Navbar.Brand>
+            <Navbar.Brand>KinBechSaman.com</Navbar.Brand>
           </LinkContainer>
           <Navbar.Toggle aria-controls='basic-navbar-nav' />
 
