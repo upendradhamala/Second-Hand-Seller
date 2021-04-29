@@ -97,10 +97,12 @@ const verificationLink = asyncHandler(async (req, res) => {
   var transporter = nodemailer.createTransport({
     service: 'gmail',
     auth: {
-      user: process.env.USER,
+      user: process.env.USER1,
       pass: process.env.PASSWORD,
     },
   })
+  console.log('USER IS', process.env.USER1)
+  console.log(process.env.PASSWORD)
 
   var mailOptions = {
     from: 'KinBechSaman.com',
