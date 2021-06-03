@@ -168,21 +168,14 @@ const registerUser = asyncHandler(async (req, res) => {
 })
 
 const emailSend = asyncHandler(async (req, res) => {
-  const {
-    receiver,
-    text,
-    name,
-    address,
-    productName,
-    email,
-    phone_no,
-  } = req.body
+  const { receiver, text, name, address, productName, email, phone_no } =
+    req.body
   console.log(req.body)
 
   var transporter = nodemailer.createTransport({
     service: 'gmail',
     auth: {
-      user: process.env.USER,
+      user: process.env.USER1,
       pass: process.env.PASSWORD,
     },
   })
