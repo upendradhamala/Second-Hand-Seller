@@ -1,6 +1,6 @@
 # Second-Hand-Products-Sell
 
-#### Please give this project a star if you this helped you in any way.
+#### Please give this project a star if this helped you in any way.
 
 This is a MERN project specially for selling and buying the second hand products.
 
