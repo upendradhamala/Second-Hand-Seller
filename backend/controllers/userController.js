@@ -183,7 +183,7 @@ const emailSend = asyncHandler(async (req, res) => {
 
   var mailOptions = {
     from: process.env.USER1,
-    to: email,
+    to: receiver,
     subject: 'You have a buyer',
 
     html: `<div style="background:#31686e;text-align:center;color:white">One of the KinBechSaman.com user wants
