@@ -2,10 +2,12 @@ import asyncHandler from 'express-async-handler'
 import User from '../models/userModel.js'
 import dotenv from 'dotenv'
 import jwt from 'jsonwebtoken'
-
+// const sgMail = require('@sendgrid/mail')
+import sgMail from '@sendgrid/mail'
 import generateToken from '../utils/generateToken.js'
 import nodemailer from 'nodemailer'
 dotenv.config()
+sgMail.setApiKey(process.env.SEND_GRID_API)
 
 const authUser = asyncHandler(async (req, res) => {
   const { email, password } = req.body
@@ -51,7 +53,6 @@ const getUserProfile = asyncHandler(async (req, res) => {
 //register a new user
 const verificationLink = asyncHandler(async (req, res) => {
   const { name, email, password, contact, address } = req.body
-  console.log(req.body)
   const { phone_no } = contact
   const userExists = await User.findOne({ email })
 
@@ -78,7 +79,6 @@ const verificationLink = asyncHandler(async (req, res) => {
   }
 
   const validateContact = contact.phone_no.length
-  console.log(validateContact)
   if (validateContact !== 10) {
     res.status(400)
     throw new Error('Enter 10 digit mobile number')
@@ -94,28 +94,38 @@ const verificationLink = asyncHandler(async (req, res) => {
     { expiresIn: '10m' }
   )
   //send email to regitering user
-  var transporter = nodemailer.createTransport({
-    service: 'gmail',
-    auth: {
-      user: process.env.USER1,
-      pass: process.env.PASSWORD,
-    },
-  })
-  console.log('USER IS', process.env.USER1)
-  console.log(process.env.PASSWORD)
+  // sgMail.setApiKey(process.env.SENDGRID_API_KEY)
 
-  var mailOptions = {
-    from: 'KinBechSaman.com',
+  // var transporter = nodemailer.createTransport({
+  //   service: 'gmail',
+  //   auth: {
+  //     user: process.env.USER1,
+  //     pass: process.env.PASSWORD,
+  //   },
+  // })
+  // console.log('USER IS', process.env.USER1)
+  // console.log(process.env.PASSWORD)
+  const mailOptions = {
+    from: process.env.USER1,
     to: email,
     subject: 'Verify your account',
 
     html: `<p>Please click on the link below to activate your account</p>
     <a href="${process.env.EMAIL_URL}/verify/${tokengenerate}">${process.env.EMAIL_URL}/verify/${tokengenerate}</a>`,
   }
+  // var mailOptions = {
+  //   from: 'KinBechSaman.com',
+  //   to: email,
+  //   subject: 'Verify your account',
 
-  transporter.sendMail(mailOptions, function (error, info) {
+  //   html: `<p>Please click on the link below to activate your account</p>
+  //   <a href="${process.env.EMAIL_URL}/verify/${tokengenerate}">${process.env.EMAIL_URL}/verify/${tokengenerate}</a>`,
+  // }
+
+  sgMail.send(mailOptions, function (error, info) {
     if (error) {
       res.status(400)
+      console.log('error occurred')
       throw new Error(error)
     } else {
       console.log('Email sent: ' + info.response)
@@ -130,7 +140,6 @@ const registerUser = asyncHandler(async (req, res) => {
   const { token } = req.body
   if (token) {
     const decoded = jwt.verify(token, process.env.JWT_SECRET)
-    console.log(decoded)
     const { name, email, password, contact, address } = decoded
     const userExists = await User.findOne({ email })
 
@@ -170,19 +179,11 @@ const registerUser = asyncHandler(async (req, res) => {
 const emailSend = asyncHandler(async (req, res) => {
   const { receiver, text, name, address, productName, email, phone_no } =
     req.body
-  console.log(req.body)
-
-  var transporter = nodemailer.createTransport({
-    service: 'gmail',
-    auth: {
-      user: process.env.USER1,
-      pass: process.env.PASSWORD,
-    },
-  })
+  console.log('user is', email)
 
   var mailOptions = {
-    from: 'KinBechSaman.com',
-    to: receiver,
+    from: process.env.USER1,
+    to: email,
     subject: 'You have a buyer',
 
     html: `<div style="background:#31686e;text-align:center;color:white">One of the KinBechSaman.com user wants
@@ -193,7 +194,7 @@ const emailSend = asyncHandler(async (req, res) => {
     He/She says:  ${text}`,
   }
 
-  transporter.sendMail(mailOptions, function (error, info) {
+  sgMail.send(mailOptions, function (error, info) {
     if (error) {
       res.status(400)
       throw new Error(error)
@@ -227,11 +228,8 @@ const deleteUser = asyncHandler(async (req, res) => {
 const updateUserProfile = asyncHandler(async (req, res) => {
   // const user = await User.findById(req.params.id)
   const { name, email, password, address, phone_no } = req.body
-  console.log('the body is ')
-  console.log(req.body)
+
   const user = await User.findById(req.params.id)
-  console.log('id')
-  console.log(req.params.id)
 
   if (user) {
     if (req.user._id.toString() === user._id.toString() || req.user.isAdmin) {
@@ -263,8 +261,7 @@ const updateUserProfile = asyncHandler(async (req, res) => {
 
 const getUserById = asyncHandler(async (req, res) => {
   const user = await User.findById(req.params.id).select('-password')
-  console.log('user is')
-  console.log(user)
+
   if (
     (user && user._id.toString() === req.user._id.toString()) ||
     req.user.isAdmin
