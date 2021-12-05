@@ -9,11 +9,14 @@ This is a MERN project specially for selling and buying the second hand products
 This contains all the features that an ecommerce website should have.
 Link to the website [Click here](https://kinbechsaman.herokuapp.com/)
 
+
+
 #### To have an admin privelege
 
 ##### email= gomacef971@tinydef.com
 
 ##### password= 12345678
+### For email functionality, email may have come in your spam folder sometimes. 
 
 #### Some of the Screenshots
 
